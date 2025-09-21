@@ -95,16 +95,31 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for (Attraction attraction : gpsUtil.getAttractions()) {
-			if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-				nearbyAttractions.add(attraction);
-			}
-		}
+//	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
+//		List<Attraction> nearbyAttractions = new ArrayList<>();
+//		for (Attraction attraction : gpsUtil.getAttractions()) {
+//			if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
+//				nearbyAttractions.add(attraction);
+//			}
+//		}
+//
+//		return nearbyAttractions;
+//	}
+//
 
+	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
+		Location userLocation = visitedLocation.location;
+
+		// Get all attractions and calculate the distance for each
+		List<Attraction> nearbyAttractions =  gpsUtil.getAttractions().stream().sorted((a1, a2) -> {
+					double distanceToA1 = rewardsService.getDistance(userLocation, a1);
+					double distanceToA2 = rewardsService.getDistance(userLocation, a2);
+					return Double.compare(distanceToA1, distanceToA2);
+				}).limit(5) // keep only the 5 closest
+				.collect(Collectors.toList());
 		return nearbyAttractions;
 	}
+
 
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
