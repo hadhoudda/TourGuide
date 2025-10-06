@@ -95,17 +95,6 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
-//	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-//		List<Attraction> nearbyAttractions = new ArrayList<>();
-//		for (Attraction attraction : gpsUtil.getAttractions()) {
-//			if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-//				nearbyAttractions.add(attraction);
-//			}
-//		}
-//
-//		return nearbyAttractions;
-//	}
-//
 
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		Location userLocation = visitedLocation.location;
