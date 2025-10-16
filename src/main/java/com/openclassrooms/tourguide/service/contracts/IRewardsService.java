@@ -7,6 +7,7 @@ import gpsUtil.location.Location;
 import java.util.List;
 
 public interface IRewardsService {
+
     void calculateRewards(User user);
     void calculateAllUsersRewardsAsync(List<User> users) throws InterruptedException;
     boolean isWithinAttractionProximity(Attraction attraction, Location location);

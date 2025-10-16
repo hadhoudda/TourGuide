@@ -9,13 +9,14 @@ import tripPricer.Provider;
 import java.util.List;
 
 public interface ITourGuideService {
+
     List<UserReward> getUserRewards(User user);
     VisitedLocation getUserLocation(User user);
     User getUser(String userName);
     List<User> getAllUsers();
     void addUser(User user);
     List<Provider> getTripDeals(User user);
-    List<VisitedLocation> calculateAllTrackUserLocationAsync(List<User> users) throws InterruptedException;
+    void calculateAllTrackUserLocationAsync(List<User> users) throws InterruptedException;
     VisitedLocation trackUserLocation(User user);
     List<Attraction> getNearByAttractions(VisitedLocation visitedLocation);
 }

@@ -33,7 +33,6 @@ import tripPricer.Provider;
 @RestController
 public class TourGuideController {
 
-    // Logger for monitoring and debugging
     private static final Logger logger = LogManager.getLogger(TourGuideController.class);
 
     @Autowired

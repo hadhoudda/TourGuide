@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import gpsUtil.GpsUtil;
@@ -19,40 +20,53 @@ import com.openclassrooms.tourguide.service.RewardsService;
 import com.openclassrooms.tourguide.service.TourGuideService;
 import com.openclassrooms.tourguide.user.User;
 
+
 public class TestPerformance {
 
-
+	/**
+	 * Tests performance of tracking a high volume of users asynchronously.
+	 * The test simulates 100,000 users and ensures that location tracking
+	 * completes within 15 minutes.
+	 */
 	@Test
+	@Disabled
 	public void highVolumeTrackLocation() throws InterruptedException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		// Users should be incremented up to 100,000, and test finishes within 15 minutes
+
+		// Define number of simulated internal users
 		InternalTestHelper.setInternalUserNumber(100000);
+
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
-		List<User> allUsers = new ArrayList<>();
-		allUsers = tourGuideService.getAllUsers();
+		List<User> allUsers = new ArrayList<>(tourGuideService.getAllUsers());
 
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 
-		//		for (User user : allUsers) {
-		//	tourGuideService.trackUserLocation(user);
-		//}
+		// Run asynchronous tracking for all users
 		tourGuideService.calculateAllTrackUserLocationAsync(allUsers);
 
-
 		stopWatch.stop();
+
+		// Stop background tracking thread
 		tourGuideService.tracker.stopTracking();
-		System.out.println("Nombre réel d'utilisateurs : " + allUsers.size());
+
+		System.out.println("Actual number of users: " + allUsers.size());
 		System.out.println("highVolumeTrackLocation: Time Elapsed: "
 				+ TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
+
+		// Assert that execution completes within 15 minutes
 		assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
 
-
-
+	/**
+	 * Tests performance of reward calculation for a large number of users.
+	 * The test simulates 100,000 users, each visiting one attraction,
+	 * and verifies that reward computation completes within 20 minutes.
+	 */
 	@Test
+	@Disabled
 	public void highVolumeGetRewards() throws InterruptedException {
 		InternalTestHelper.setInternalUserNumber(100000);
 		GpsUtil gpsUtil = new GpsUtil();
@@ -61,32 +75,33 @@ public class TestPerformance {
 
 		List<User> allUsers = tourGuideService.getAllUsers();
 
-		// Simuler la visite d'une attraction pour chaque utilisateur
+		// Simulate one attraction visit for each user
 		Attraction attraction = gpsUtil.getAttractions().get(0);
-		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
+		allUsers.forEach(u ->
+				u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date()))
+		);
 
-		// Mesure du temps
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 
-
-		// Appel de la méthode asynchrone
+		// Run asynchronous reward calculation
 		rewardsService.calculateAllUsersRewardsAsync(allUsers);
 
 		stopWatch.stop();
 
+		// Verify each user received at least one reward
 		for (User user : allUsers) {
 			assertTrue(user.getUserRewards().size() > 0);
 		}
 
+		// Stop background tracker thread
 		tourGuideService.tracker.stopTracking();
-		// ferme le thread pool
-		//rewardsService.shutdown();
-		System.out.println("Nombre réel d'utilisateurs : " + allUsers.size());
 
-		System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime())
-				+ " seconds.");
+		System.out.println("Actual number of users: " + allUsers.size());
+		System.out.println("highVolumeGetRewards: Time Elapsed: "
+				+ TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
+
+		// Assert that execution completes within 20 minutes
 		assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
-
 }

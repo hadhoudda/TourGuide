@@ -18,8 +18,6 @@ public class NearbyAttractionDTO {
         this.userLongitude = userLongitude;
         this.distanceInMiles = distanceInMiles;
         this.rewardPoints = rewardPoints;
-
-
     }
 
     public String getAttractionName() {
