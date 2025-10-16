@@ -1,20 +1,14 @@
 package com.openclassrooms.tourguide.service;
 
 import com.openclassrooms.tourguide.helper.InternalTestHelper;
+import com.openclassrooms.tourguide.service.contracts.ITourGuideService;
 import com.openclassrooms.tourguide.tracker.Tracker;
 import com.openclassrooms.tourguide.user.User;
 import com.openclassrooms.tourguide.user.UserReward;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,20 +28,21 @@ import tripPricer.Provider;
 import tripPricer.TripPricer;
 
 @Service
-public class TourGuideService {
+public class TourGuideService implements ITourGuideService {
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 	private final GpsUtil gpsUtil;
 	private final RewardsService rewardsService;
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
-	private int nbreThread = Runtime.getRuntime().availableProcessors();
-	private final ExecutorService executorService = Executors.newFixedThreadPool(nbreThread  *2 );
+//	private int nbreThread = Runtime.getRuntime().availableProcessors();
+//	private final ExecutorService executorService = Executors.newFixedThreadPool(nbreThread  *2 );
+	private final ExecutorService executorService = Executors.newFixedThreadPool(100 );
 
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
-		
+
 		Locale.setDefault(Locale.US);
 
 		if (testMode) {
@@ -60,30 +55,36 @@ public class TourGuideService {
 		addShutDownHook();
 	}
 
+	@Override
 	public List<UserReward> getUserRewards(User user) {
 		return user.getUserRewards();
 	}
 
+	@Override
 	public VisitedLocation getUserLocation(User user) {
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
 				: trackUserLocation(user);
 		return visitedLocation;
 	}
 
+	@Override
 	public User getUser(String userName) {
 		return internalUserMap.get(userName);
 	}
 
+	@Override
 	public List<User> getAllUsers() {
 		return internalUserMap.values().stream().collect(Collectors.toList());
 	}
 
+	@Override
 	public void addUser(User user) {
 		if (!internalUserMap.containsKey(user.getUserName())) {
 			internalUserMap.put(user.getUserName(), user);
 		}
 	}
 
+	@Override
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
 		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(),
@@ -94,9 +95,8 @@ public class TourGuideService {
 	}
 
 
-
-
-	public List<VisitedLocation> calculateAllTrackUserLocation(List<User> users) throws InterruptedException {
+	@Override
+	public List<VisitedLocation> calculateAllTrackUserLocationAsync(List<User> users) throws InterruptedException {
 
 		List<CompletableFuture<VisitedLocation>> futures = users.stream()
 				.map(user -> CompletableFuture.supplyAsync(() -> trackUserLocation(user), executorService))
@@ -112,6 +112,7 @@ public class TourGuideService {
 	}
 
 
+	@Override
 	public VisitedLocation trackUserLocation(User user) {
 		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
@@ -121,6 +122,7 @@ public class TourGuideService {
 
 
 
+	@Override
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		Location userLocation = visitedLocation.location;
 
@@ -144,9 +146,9 @@ public class TourGuideService {
 	}
 
 	/**********************************************************************************
-	 * 
+	 *
 	 * Methods Below: For Internal Testing
-	 * 
+	 *
 	 **********************************************************************************/
 	private static final String tripPricerApiKey = "test-server-api-key";
 	// Database connection will be used for external users, but for testing purposes
