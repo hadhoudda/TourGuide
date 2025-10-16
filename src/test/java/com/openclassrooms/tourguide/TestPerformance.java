@@ -34,7 +34,7 @@ public class TestPerformance {
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
 		// Define number of simulated internal users
-		InternalTestHelper.setInternalUserNumber(1000);
+		InternalTestHelper.setInternalUserNumber(100000);
 
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
@@ -66,7 +66,7 @@ public class TestPerformance {
 	 */
 	@Test
 	public void highVolumeGetRewards() throws InterruptedException {
-		InternalTestHelper.setInternalUserNumber(1000);
+		InternalTestHelper.setInternalUserNumber(100000);
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
