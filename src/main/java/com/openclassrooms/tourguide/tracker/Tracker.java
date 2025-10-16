@@ -13,18 +13,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Background tracker that periodically updates user locations
- * by invoking the {@link TourGuideService#trackUserLocation(User)} method.
- *
- * <p>
- * This class runs as a separate thread managed by an {@link ExecutorService}.
- * It polls the user list at a fixed interval (every 5 minutes by default)
- * and updates their current location.
- * </p>
- *
- * <p>
- * The tracker can be safely stopped using {@link #stopTracking()} which shuts down
- * its executor and gracefully interrupts the running thread.
- * </p>
  */
 public class Tracker extends Thread {
 

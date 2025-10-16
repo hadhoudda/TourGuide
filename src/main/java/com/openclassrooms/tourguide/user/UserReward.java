@@ -13,7 +13,6 @@ public class UserReward {
 		this.attraction = attraction;
 		this.rewardPoints = rewardPoints;
 	}
-	
 
 	public UserReward(VisitedLocation visitedLocation, Attraction attraction) {
 		this(visitedLocation, attraction, 0); // Par défaut 0 points

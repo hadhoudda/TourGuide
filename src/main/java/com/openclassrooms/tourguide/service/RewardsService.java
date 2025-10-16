@@ -24,19 +24,6 @@ import java.util.stream.Collectors;
 /**
  * Service responsible for calculating and assigning rewards to users
  * based on their visited locations and proximity to known attractions.
- *
- * <p>This service integrates with:
- * <ul>
- *   <li>{@link GpsUtil} to retrieve the list of available attractions.</li>
- *   <li>{@link RewardCentral} to get the reward points for each attraction.</li>
- * </ul>
- * </p>
- *
- * <p>Rewards are computed either synchronously for a single user or asynchronously
- * for multiple users using a thread pool.</p>
- *
- * @author
- * @version 1.0
  */
 @Service
 public class RewardsService implements IRewardsService {

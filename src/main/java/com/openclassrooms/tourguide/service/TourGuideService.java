@@ -27,16 +27,6 @@ import java.util.stream.IntStream;
 /**
  * Main service responsible for user tracking, location management,
  * reward calculation, and trip deal retrieval.
- *
- * <p>This service integrates several external components:
- * <ul>
- *     <li>{@link GpsUtil} to obtain user and attraction locations.</li>
- *     <li>{@link RewardsService} to calculate and assign rewards.</li>
- *     <li>{@link TripPricer} to fetch personalized trip offers.</li>
- * </ul>
- * </p>
- *
- * <p>It also initializes internal test users in {@code testMode} for demo and development purposes.</p>
  */
 @Service
 public class TourGuideService implements ITourGuideService {
