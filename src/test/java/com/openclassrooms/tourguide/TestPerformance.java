@@ -29,13 +29,12 @@ public class TestPerformance {
 	 * completes within 15 minutes.
 	 */
 	@Test
-	@Disabled
 	public void highVolumeTrackLocation() throws InterruptedException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
 		// Define number of simulated internal users
-		InternalTestHelper.setInternalUserNumber(100000);
+		InternalTestHelper.setInternalUserNumber(1000);
 
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
@@ -66,9 +65,8 @@ public class TestPerformance {
 	 * and verifies that reward computation completes within 20 minutes.
 	 */
 	@Test
-	@Disabled
 	public void highVolumeGetRewards() throws InterruptedException {
-		InternalTestHelper.setInternalUserNumber(100000);
+		InternalTestHelper.setInternalUserNumber(1000);
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);

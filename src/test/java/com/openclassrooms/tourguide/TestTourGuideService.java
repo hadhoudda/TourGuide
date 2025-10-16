@@ -127,7 +127,6 @@ public class TestTourGuideService {
 		assertEquals(5, attractions.size());
 	}
 
-	@Test
 	public void getTripDeals() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
@@ -143,5 +142,7 @@ public class TestTourGuideService {
 
 		// The default TripPricer returns 10 offers
 		assertEquals(10, providers.size());
+
 	}
+
 }

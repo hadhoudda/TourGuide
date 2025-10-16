@@ -131,7 +131,7 @@ public class TourGuideService implements ITourGuideService {
 	@Override
 	public List<Provider> getTripDeals(User user) {
 		int totalRewardPoints = user.getUserRewards().stream()
-				.mapToInt(UserReward::getRewardPoints)
+				.mapToInt(i -> i.getRewardPoints())
 				.sum();
 
 		List<Provider> providers = tripPricer.getPrice(
