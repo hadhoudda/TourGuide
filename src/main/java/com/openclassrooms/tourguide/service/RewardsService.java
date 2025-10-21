@@ -15,10 +15,7 @@ import rewardCentral.RewardCentral;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -84,8 +81,10 @@ public class RewardsService implements IRewardsService {
 	 */
 	@Override
 	public void calculateRewards(User user) {
-		List<VisitedLocation> visitedLocations = new ArrayList<>(user.getVisitedLocations());
-		List<Attraction> attractions = new ArrayList<>(gpsUtil.getAttractions());
+
+		List<VisitedLocation> visitedLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
+		List<Attraction> attractions = new CopyOnWriteArrayList<>(gpsUtil.getAttractions());
+
 
 		// Track already rewarded attractions to avoid duplicate rewards
 		Set<String> rewardedAttractions = user.getUserRewards().stream()
